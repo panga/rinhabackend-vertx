@@ -1,0 +1,11 @@
+FROM ghcr.io/graalvm/native-image-community:20 AS build-env
+
+WORKDIR /app
+ADD . /app
+RUN ./mvnw package -Pnative-image
+
+FROM debian:12
+
+WORKDIR /app
+COPY --from=build-env /app/target/rinhabackend /app/rinhabackend
+ENTRYPOINT [ "./rinhabackend" ]
