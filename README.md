@@ -2,6 +2,8 @@
 
 This application was built as a solution for Rinha de Backend 2023 Q3 challenge [instructions](https://github.com/zanfranceschi/rinha-de-backend-2023-q3/blob/main/INSTRUCOES.md).
 
+Read my post [how to use Java superpowers to beat Rust in a backend challenge](https://medium.com/@leonardopanga/how-to-use-java-superpowers-to-beat-rust-in-a-backend-challenge-15fc219f776d).
+
 ### Solution
 
 - Default PostgreSQL configuration.
