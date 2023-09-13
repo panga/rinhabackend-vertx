@@ -11,6 +11,7 @@ import io.vertx.pgclient.PgConnectOptions;
 import io.vertx.pgclient.PgPool;
 import io.vertx.sqlclient.*;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.UUID;
 
@@ -54,6 +55,8 @@ public class MainVerticle extends AbstractVerticle {
   private void criarPessoa(RoutingContext routingContext) {
     String apelido, nome, nascimento;
     String[] stack;
+
+    // Syntax validation
     try {
       JsonObject payload = routingContext.getBodyAsJson();
       apelido = payload.getString("apelido");
@@ -70,14 +73,52 @@ public class MainVerticle extends AbstractVerticle {
       return;
     }
 
+    // Content validation
+    if (apelido != null) {
+      if (apelido.length() > 32) {
+        routingContext.fail(422);
+        return;
+      }
+    } else {
+      routingContext.fail(422);
+      return;
+    }
+
+    if (nome != null) {
+      if (nome.length() > 100) {
+        routingContext.fail(422);
+        return;
+      }
+    } else {
+      routingContext.fail(422);
+      return;
+    }
+
+    if (nascimento != null) {
+        try {
+          new SimpleDateFormat("yyyy-MM-dd").parse(nascimento);
+        } catch (Exception e) {
+          routingContext.fail(422, e);
+          return;
+        }
+    } else {
+      routingContext.fail(422);
+      return;
+    }
+
+    if (stack != null) {
+      for (String s : stack) {
+        if (s.length() > 32) {
+          routingContext.fail(422);
+          return;
+        }
+      }
+    }
+
+    // Insert data
     String id = UUID.randomUUID().toString();
     StringBuilder buscaText = new StringBuilder();
-    if (apelido != null) {
-      buscaText.append(apelido);
-    }
-    if (nome != null) {
-      buscaText.append(" ").append(nome);
-    }
+    buscaText.append(apelido).append(" ").append(nome);
     if (stack != null) {
       buscaText.append(" ").append(String.join(" ", stack));
     }
@@ -142,7 +183,7 @@ public class MainVerticle extends AbstractVerticle {
         "FROM PESSOAS\n" +
         "WHERE BUSCA_TRGM LIKE $1\n" +
         "LIMIT 50")
-      .execute(Tuple.of("%" + termo + "%"))
+      .execute(Tuple.of("%" + termo.toLowerCase() + "%"))
       .onComplete(ar -> {
         if (ar.succeeded()) {
           RowSet<Row> rows = ar.result();
