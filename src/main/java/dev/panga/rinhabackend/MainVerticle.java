@@ -11,7 +11,8 @@ import io.vertx.pgclient.PgConnectOptions;
 import io.vertx.pgclient.PgPool;
 import io.vertx.sqlclient.*;
 
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
@@ -96,7 +97,7 @@ public class MainVerticle extends AbstractVerticle {
 
     if (nascimento != null) {
         try {
-          new SimpleDateFormat("yyyy-MM-dd").parse(nascimento);
+          LocalDate.parse(nascimento, DateTimeFormatter.ISO_LOCAL_DATE);
         } catch (Exception e) {
           routingContext.fail(422, e);
           return;
