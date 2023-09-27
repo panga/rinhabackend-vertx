@@ -1,4 +1,4 @@
-FROM amazoncorretto:20
+FROM amazoncorretto:21
 
 WORKDIR /app
 ADD target/rinhabackend.jar .

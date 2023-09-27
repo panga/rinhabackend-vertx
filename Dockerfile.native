@@ -1,4 +1,4 @@
-FROM ghcr.io/graalvm/native-image-community:20 AS build-env
+FROM ghcr.io/graalvm/native-image-community:21 AS build-env
 
 WORKDIR /app
 ADD . /app
